@@ -4,9 +4,13 @@
 文中使用两个Socket进行通讯，两Socket进行文件的传输，具体操作代码中有注释
 
 private SocketUtils sockerServer;//本机的服务(通讯使用)
+
 private SocketUtils sockerClient;//连接远程的服务(通讯使用)
+
 private FileClient fileClient;//上传文件的服务
+
 private FileServer fileServer;//接收文件的服务
+
 
 文中使用两个Socket进行通讯，两Socket进行文件的传输，具体操作代码中有注释
 private void scanDevice()//开始扫描同一网段下的IP，并测试是否有可用的拿到可以用的Socket
