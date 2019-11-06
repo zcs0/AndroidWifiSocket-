@@ -17,6 +17,7 @@ import com.wifi.utils.SocketUtils;
 import com.wifi.utils.SocketUtils.SocketListener;
 import com.wifi.utils.SystemUtil;
 import com.wifi.utils.inf.Const;
+import com.z.utils.T;
 import com.z.utils.UriUtils;
 
 import android.app.Activity;
@@ -45,26 +46,27 @@ import android.widget.TextView;
  * @version V1.0
  * @Date 2019年11月1日 下午4:08:58
  * @Modification 2019年11月1日 下午4:08:58
- * @Description: TODO(用一句话描述该文件做什么)
+ * @Description: qq:931656520</br> 
+ * 更多福利资源https://bbs.pediy.com/user-854079.htm</br>
+ * 下载地址：https://github.com/zcs0/AndroidWifiSocket-.git
  */
 public class MainActivity extends Activity {
 	protected String TAG = "MainActivity";
 	private List<Socket> listData;
 	private MyAdapter adapter;
-	private int serverPort = 8988;
-	private int port1 = 8988;
 	private ListView lv_view;
-	private SocketUtils sockerServer;
-	private SocketUtils sockerClient;
-	private FileClient fileClient;
-	private FileServer fileServer;
+	private SocketUtils sockerServer;//本机的服务(通讯使用)
+	private SocketUtils sockerClient;//连接远程的服务(通讯使用)
+	private FileClient fileClient;//上传文件的服务
+	private FileServer fileServer;//接收文件的服务
 	private TextView tvMessge;
 	private ProgressBar progressBar;
 	private List<Socket> deviceList;
 	private ProgressDialog progressDialog;
 	private AlertDialog dialog;
 	int REQUEST_CODE = 202;
-	private int send_file_port = 8888;
+	private final int SERVER_PORT = 8988;//通讯端口
+	private final int send_file_port = 8888;//文件传输端口
 	boolean isFile = false;
 	String fileName = null;
 	private String savePath = Environment.getExternalStorageDirectory() + File.separator + "_0";// 接收文件保存位置
@@ -75,7 +77,7 @@ public class MainActivity extends Activity {
 		TextView tv = (TextView) findViewById(R.id.tv_ip);
 		tvMessge = (TextView) findViewById(R.id.tv_messge);
 		tv.setText(NetWorkUtil.getIPAddress(this));
-		openServer(serverPort);// 打开服务
+		openServer(SERVER_PORT);// 打开服务
 		tvMessge.setMovementMethod(ScrollingMovementMethod.getInstance());
 
 	}
@@ -83,8 +85,7 @@ public class MainActivity extends Activity {
 	public void onClick(View view) {
 		switch (view.getId()) {
 		case R.id.btn_scan:
-			
-			scanDevice();
+			scanDevice();//搜索同一网段下的设备
 			if(dialog!=null && deviceList!=null && deviceList.size()>0) {
 				dialog.show();
 			}
@@ -92,6 +93,8 @@ public class MainActivity extends Activity {
 		case R.id.btn_send_file:
 			if (sockerClient != null) {
 				openSelect();
+			}else {
+				T.showShort(this, "未连接到设置");
 			}
 			break;
 		default:
@@ -263,7 +266,7 @@ public class MainActivity extends Activity {
 							}
 						}
 					}
-					final Socket socket = new Socket(host, port1);
+					final Socket socket = new Socket(host, SERVER_PORT);//试连接
 					Log.e(TAG, "连接成功  " );
 					runOnUiThread(new Runnable() {
 						public void run() {
